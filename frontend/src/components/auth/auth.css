@@ -1,13 +1,18 @@
 .signup-card {
-  height: 80vh;
+  height: 50vh;
   width: 40vw;
-  background-color: #353535;
+  background-color: #262626;
   margin-top: 5%;
   border-radius: 40px 40px 40px 40px;
   display: flex;
   flex-direction: column;
 }
-
+.container-auth {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
 .login-container {
   height: 100vh;
   width: 100vw;
@@ -15,9 +20,9 @@
 }
 
 .login-card {
-  height: 50vh;
-  width: 40vw;
-  background-color: #353535;
+  height: 40vh;
+  width: 30vw;
+  background-color: #262626;
   margin-top: 5%;
   border-radius: 40px 40px 40px 40px;
   display: flex;
@@ -28,6 +33,8 @@
   height: 100vh;
   width: 100vw;
   background-color: #191919;
+  align-items: center;
+  justify-content: center;
 }
 
 .card-header {
@@ -41,12 +48,21 @@
   width: 50%;
   align-items: center;
   justify-content: center;
+  background-color: #353535;
+  border-radius: 10px 10px 10px 10px;
+  height: 5vh;
+  color: #ffffff;
+}
+
+.field-text {
+  padding-right: 30px;
 }
 
 .card-entry {
   margin: 3%;
-  width: 50vw;
-  height: 10vh;
+  display: flex;
+  height: 6vh;
+  justify-content: flex-start;
 }
 
 .card-entry h6 {
@@ -54,8 +70,12 @@
 }
 
 .button-custom {
-  display: flex;
-  width: 70%;
-  justify-content: center;
   margin: 5%;
+}
+
+.button-container {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
 }

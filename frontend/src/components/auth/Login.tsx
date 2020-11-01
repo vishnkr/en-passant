@@ -5,21 +5,22 @@ import NavBar from "../landing/NavBar";
 const Login: React.FC = () => {
     return (
         <div className="login-container">
-            <NavBar />
-            <div className="container">
+            <NavBar isSignedIn={false} />
+            <div className="container container-auth">
                 <div className="login-card">
                     <div className="card-header">
                         <h2>Log in to your account</h2>
                     </div>
                     <div className="card-entry">
-                        <h6>Username</h6>
+                        <div><h6 className="field-text">Username</h6></div>
                         <input className="entry" type="text" placeholder="Username"></input>
                     </div>
+                    
                     <div className="card-entry">
-                        <h6>Password</h6>
+                        <div><h6 className="field-text">Password</h6></div>
                         <input className="entry" type="password" placeholder="Password"></input>
                     </div>
-                    <div>
+                    <div className="button-container">
                         <button className="btn btn-success button-custom">Login</button>
                     </div>
                 </div>
