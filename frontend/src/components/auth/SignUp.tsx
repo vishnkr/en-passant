@@ -2,7 +2,7 @@ import React,{useState,useEffect} from 'react';
 import './auth.css'
 import {useHistory} from 'react-router-dom';
 import NavBar from "../landing/NavBar";
-import axios from "axios";
+import axios, { AxiosStatic } from "axios";
 
 function Alert(props:any) {
   const error = props.isError;
@@ -20,7 +20,19 @@ const SignUp: React.FC = () => {
     const [password, setPassword] = useState('');
     const [email, setEmail] = useState('');
     const [alert, setAlert] = useState(false);
+    const[isMounted,setMountStatus] = useState(false);
+
+    
     const history = useHistory();
+
+    useEffect(() => {
+        setMountStatus(true);
+        return () => setMountStatus(false);
+     }, [])
+     
+     if(!isMounted) {
+       return null;
+     }
 
     const isValidEmail = function (): boolean{
         const re = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
@@ -31,17 +43,21 @@ const SignUp: React.FC = () => {
     const isvalidPassword = function (): boolean{
         const re = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,}$/;
         console.log("password valid?",re.test(String(password)));
+        return true;
         return re.test(String(password));
     }
 
-    const isUniqueUsername = () => {
-        
-    }
+    //const isUniqueUsername = function (): boolean {
+        //get request for username, if match prompt re enter fields
+    //}
 
-    const handleSubmit = (e: React.FormEvent ) => {
+    const handleSubmit = async (e: React.FormEvent ) => {
         e.preventDefault();
-        const submitForm = isValidEmail() && isvalidPassword() && isUniqueUsername();
-        if (submitForm) {
+        const submitForm = isValidEmail() && isvalidPassword(); //&& isUniqueUsername();
+        if (submitForm && isMounted) {
+            const submitData : string = JSON.stringify({Username: username, Password: password, Email: email})
+            const postStatus: AxiosStatic  = await axios.post("http://localhost:8080/users/add",submitData);
+            console.log(postStatus);
             history.push('/');
             setAlert(true);
         }
