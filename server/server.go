@@ -24,12 +24,6 @@ type User struct {
 	Email string
 }
 
-//UserJSON : user model
-type UserJSON struct {
-	Username string
-	Email string
-	Password string
-  }
 
 var db *gorm.DB
 var err error
@@ -45,16 +39,20 @@ func main() {
 	defer db.Close()
 	db.AutoMigrate(&User{})
 	
-
+	router.HandleFunc("/", welcome).Methods("GET")
 	router.HandleFunc("/users", GetUsers).Methods("GET")
 	router.HandleFunc("/user/{id}",GetUser).Methods("GET")
+	router.HandleFunc("/login",HandleLogin).Methods("POST")
 	router.HandleFunc("/users/add",CreateUser).Methods("POST")
 
 	handler := cors.Default().Handler(router)
 	log.Fatal(http.ListenAndServe(":8080", handler))
 }
 
-
+func welcome(w http.ResponseWriter, r *http.Request){
+	fmt.Fprintf(w, "Welcome to En Passant Backend")
+	
+}
 func formatRequest(r *http.Request) string{
 
 	var request []string
@@ -101,13 +99,34 @@ func CreateUser(w http.ResponseWriter, r *http.Request){
 }
 
 
-
 //GetUser : returns one user from db based on id
-func GetUser(w http.ResponseWriter, r *http.Request) {
+func GetUser(w http.ResponseWriter, r *http.Request){
 	params := mux.Vars(r)
 	var user User
+
 	db.First(&user, params["User_id"])
 	json.NewEncoder(w).Encode(&user)
+}
+
+//HandleLogin : function to handle login
+func HandleLogin(w http.ResponseWriter, r *http.Request){
+	//params := mux.Vars(r)
+	var user User
+	var result map[string]string
+	//json.NewEncoder(w).Encode(&user)
+	err := json.NewDecoder(r.Body).Decode(&result)
+	if (err !=nil){
+		fmt.Print("failed lol")
+	}
+	var match bool = true
+	db.First(&user,"Username=?",result["Username"])//, 
+	//db.Find(&user,params["Username="+result["Username"]])
+	fmt.Print("res- ",result," \n",user.Username)
+		if result["Username"]!=user.Username || result["Password"]!=user.Password{
+			fmt.Print(result,user)
+			match = false
+		}
+	json.NewEncoder(w).Encode(match)
 }
 
 
