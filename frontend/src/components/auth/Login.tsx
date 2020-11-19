@@ -4,30 +4,37 @@ import axios, { AxiosStatic } from "axios";
 import NavBar from "../landing/NavBar";
 import {useHistory} from 'react-router-dom';
 
-const Login: React.FC = () => {
+interface Props {
+    loggedIn: boolean;
+    logInCallback: (username: string) => void;//(value:React.SetStateAction<boolean>)=>void;
+}
+
+const Login: React.FC <Props> = (props:Props) => {
 
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const [alert, setAlert] = useState(false);
     const[isMounted,setMountStatus] = useState(false);
     const history = useHistory();
-    
+
     useEffect(() => {
         setMountStatus(true);
         return () => setMountStatus(false);
      }, [])
      
-     if(!isMounted) {
-       return null;
-     }
 
     const handleSubmit = async (e: React.FormEvent ) => {
         e.preventDefault();
-        if ( isMounted) {
+        if (isMounted) {
             const submitData : string = JSON.stringify({Username: username, Password: password})
-            const postStatus: AxiosStatic  = await axios.post("http://localhost:8080/login/",submitData);
-            console.log(postStatus);
-            history.push('/dashboard');
+            const postStatus  = await axios.post("http://localhost:8080/login",submitData);
+            console.log(postStatus.data)
+            if(postStatus.data){
+                props.logInCallback(username);
+                localStorage.setItem('loginStatus', '1');
+                localStorage.setItem('username',username);
+                history.push('/dashboard');
+            }
             setAlert(true);
         }
         else { setAlert(false); }

@@ -30,9 +30,6 @@ const SignUp: React.FC = () => {
         return () => setMountStatus(false);
      }, [])
      
-     if(!isMounted) {
-       return null;
-     }
 
     const isValidEmail = function (): boolean{
         const re = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
@@ -44,7 +41,7 @@ const SignUp: React.FC = () => {
         const re = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,}$/;
         console.log("password valid?",re.test(String(password)));
         return true;
-        return re.test(String(password));
+        //return re.test(String(password));
     }
 
     //const isUniqueUsername = function (): boolean {

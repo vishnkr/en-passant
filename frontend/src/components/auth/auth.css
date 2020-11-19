@@ -19,6 +19,7 @@
   background-color: #191919;
 }
 
+
 .login-card {
   height: 40vh;
   width: 30vw;
@@ -44,6 +45,8 @@
   font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
 }
 
+
+
 .entry {
   width: 50%;
   align-items: center;
@@ -52,6 +55,7 @@
   border-radius: 10px 10px 10px 10px;
   height: 5vh;
   color: #ffffff;
+  border-style: none;
 }
 
 .field-text {
