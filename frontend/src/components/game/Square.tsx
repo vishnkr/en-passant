@@ -16,8 +16,8 @@ interface Props {
 const Square: React.FC<Props> = (props: Props) => {
     return (
         <>
-            <button className={"square " + props.shade}>
-                <img src={props.pieceInfo? props.pieceInfo.pieceURL: null}/>
+            <button draggable="true" className={"square " + props.shade}>
+                <img draggable="true" src={props.pieceInfo? props.pieceInfo.pieceURL: null}/>
             </button>
         </>
     );

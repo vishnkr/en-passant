@@ -64,7 +64,6 @@ const SignUp: React.FC = () => {
  
     return (
         <div className="signup-container">
-            <NavBar isSignedIn={false} />
             <Alert isError={alert} />
             <div className="container container-auth">
                 <form onSubmit={handleSubmit}>

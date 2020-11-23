@@ -43,7 +43,7 @@ const Login: React.FC <Props> = (props:Props) => {
 
     return (
         <div className="login-container">
-            <NavBar isSignedIn={false} />
+
             <div className="container container-auth">
                 <form onSubmit={handleSubmit}>
                     <div className="login-card">

@@ -6,6 +6,7 @@ import Landing from "./components/landing/Landing";
 import Login from "./components/auth/Login";
 import SignUp from "./components/auth/SignUp";
 import Dashboard from "./components/dashboard/Dashboard";
+import NavBar from "./components/landing/NavBar";
 
 function App() {
     const [userLoggedIn,setUserLogin] = useState(false);
@@ -19,6 +20,7 @@ function App() {
     return (
         <Router>
             <div className="App">
+                <NavBar isSignedIn={userLoggedIn} userName={userName} />
                 <Route exact path="/" component={withRouter(Landing)} />
                 <Route exact path="/login" render={()=> <Login loggedIn={userLoggedIn} logInCallback={handleCallback}/>} />
                 <Route exact path="/signup" component={withRouter(SignUp)} />

@@ -35,7 +35,7 @@ const Dashboard: React.FC<Props> = (props:Props) =>{
     }
     return (
         <div className="dashboard-container">
-            <NavBar isSignedIn={isLoggedIn} userName={userName} />
+            
             <div className="dashboard">
             {!isLoggedIn ? 
             <div> You do not have access to this page, head over to login page or sign up for an account </div> :

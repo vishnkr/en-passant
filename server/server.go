@@ -1,53 +1,112 @@
 package main
 
 import (
-	"encoding/json"
+	//"encoding/json"
 	"log"
 	"net/http"
 	"fmt"
-	"io/ioutil"
-	"strings"
+	"os"
+	//"io/ioutil"
+	//"strings"
 	"github.com/gorilla/mux"
 	"github.com/jinzhu/gorm"
-
+	//routes "github.com/vishnkr/en-passant/server/src/routes"
+	"github.com/vishnkr/en-passant/server/src/models"
+	"github.com/vishnkr/en-passant/server/src/controller"
 	"github.com/rs/cors"
-
+	"github.com/joho/godotenv"
 	_ "github.com/jinzhu/gorm/dialects/postgres"
 )
 
-//User : user model
-type User struct { 
-	gorm.Model
-	UserID int 
-	Username string
-	Password string
-	Email string
+//App : app struct
+type App struct {
+	Router *mux.Router
+	DB     *gorm.DB
 }
 
+//RequestHandlerFunction : 
+type RequestHandlerFunction func(db *gorm.DB, w http.ResponseWriter, r *http.Request)
 
-var db *gorm.DB
-var err error
+//handleRequest : handle request
+func (a *App) handleRequest(handler RequestHandlerFunction) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		handler(a.DB, w, r)
+	}
+}
 
-func main() {
-	router := mux.NewRouter()
-	db,err = gorm.Open( "postgres", "port=5432 user=vishwas dbname=chess-game sslmode=disable password=Bolerocar")
+//Initialize : initialize db orm and router
+func (a *App) Initialize(){
+	var db *gorm.DB
+	var err error
+	fmt.Printf("reached\n")
+	envErr := godotenv.Load(".env")
+	if envErr != nil {
+		log.Fatalf("Error loading .env file")
+	  }
+	var dbString = fmt.Sprintf("port=%v user=%v dbname=%v sslmode=disable password=%v",os.Getenv("DB_PORT"),os.Getenv("DB_USERNAME"),os.Getenv("DB_NAME"),os.Getenv("DB_PASSWORD"))
+	db,err = gorm.Open( "postgres", dbString)
   	if err != nil {
 		fmt.Printf("failed to connect to databse\n")
 
     //panic("failed to connect database")
 	  }
-	defer db.Close()
-	db.AutoMigrate(&User{})
-	
-	router.HandleFunc("/", welcome).Methods("GET")
-	router.HandleFunc("/users", GetUsers).Methods("GET")
-	router.HandleFunc("/user/{id}",GetUser).Methods("GET")
-	router.HandleFunc("/login",HandleLogin).Methods("POST")
-	router.HandleFunc("/users/add",CreateUser).Methods("POST")
+	a.DB = model.DBMigrate(db)
+	a.Router = mux.NewRouter()
+	a.setRouters()
+}//config)
 
-	handler := cors.Default().Handler(router)
-	log.Fatal(http.ListenAndServe(":8080", handler))
+//Get : get wrapper
+func (a *App) Get(path string, f func(w http.ResponseWriter,r *http.Request)){
+	a.Router.HandleFunc(path, f).Methods("GET")
 }
+
+//Post : post wrapper
+func (a *App) Post(path string, f func(w http.ResponseWriter,r *http.Request)){
+	a.Router.HandleFunc(path, f).Methods("POST")
+}
+
+//Run : run on port
+func (a *App) Run (port string){
+	handler := cors.Default().Handler(a.Router)
+	log.Fatal(http.ListenAndServe(port, handler))
+}
+
+func (a *App) setRouters() {
+	a.Get("/", a.handleRequest(controller.Welcome))
+	a.Get("/users", a.handleRequest(controller.GetUsers))
+	a.Get("/user/{id}",a.handleRequest(controller.GetUser))
+	a.Post("/login",a.handleRequest(controller.HandleLogin))
+	a.Post("/users/add",a.handleRequest(controller.CreateUser))
+	
+	/*
+	// Routing for handling the projects
+	a.Get("/projects", a.handleRequest(handler.GetAllProjects))
+	a.Post("/projects", a.handleRequest(handler.CreateProject))
+	a.Get("/projects/{title}", a.handleRequest(handler.GetProject))
+	a.Put("/projects/{title}", a.handleRequest(handler.UpdateProject))
+	a.Delete("/projects/{title}", a.handleRequest(handler.DeleteProject))
+	a.Put("/projects/{title}/archive", a.handleRequest(handler.ArchiveProject))
+	a.Delete("/projects/{title}/archive", a.handleRequest(handler.RestoreProject))
+
+	// Routing for handling the tasks
+	a.Get("/projects/{title}/tasks", a.handleRequest(handler.GetAllTasks))
+	a.Post("/projects/{title}/tasks", a.handleRequest(handler.CreateTask))
+	a.Get("/projects/{title}/tasks/{id:[0-9]+}", a.handleRequest(handler.GetTask))
+	a.Put("/projects/{title}/tasks/{id:[0-9]+}", a.handleRequest(handler.UpdateTask))
+	a.Delete("/projects/{title}/tasks/{id:[0-9]+}", a.handleRequest(handler.DeleteTask))
+	a.Put("/projects/{title}/tasks/{id:[0-9]+}/complete", a.handleRequest(handler.CompleteTask))
+	a.Delete("/projects/{title}/tasks/{id:[0-9]+}/complete", a.handleRequest(handler.UndoTask))
+	*/
+}
+
+func main() {
+	app := &App{}
+	app.Initialize()
+	app.Run(":8080")
+	
+}
+
+/*
 
 func welcome(w http.ResponseWriter, r *http.Request){
 	fmt.Fprintf(w, "Welcome to En Passant Backend")
@@ -128,6 +187,7 @@ func HandleLogin(w http.ResponseWriter, r *http.Request){
 		}
 	json.NewEncoder(w).Encode(match)
 }
+*/
 
 
 
